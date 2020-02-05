@@ -21,9 +21,10 @@ struct ScheduleView: View {
         }
     }
     
-    var body: some View {
-        Text("#" + schedule.color)
-        
+    var body: some View {        
+        Text(schedule.name)
+            .foregroundColor(Color(red: Double(schedule.color[0]), green: Double(schedule.color[1]), blue: Double(schedule.color[2])))
+            
         .navigationBarTitle(Text(schedule.name), displayMode: .inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(trailing: back_button)

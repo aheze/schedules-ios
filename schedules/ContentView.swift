@@ -7,17 +7,34 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
+    @EnvironmentObject var settings: UserSettings
+    
     var body: some View {
-        NavigationView {
+        if !self.settings.basic_configuration_set {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                if success {
+                    print("[CV-N] All set!")
+                    self.settings.basic_configuration_set = true
+                    self.settings.notification_permissions_granted = true
+                } else if let error = error {
+                    print(error.localizedDescription)
+                    self.settings.basic_configuration_set = true
+                    self.settings.notification_permissions_granted = false
+                }
+            }
+        }
+        
+        return NavigationView {
             List(schedules) { schedule in
                 NavigationLink(destination: ScheduleView(schedule: schedule)) {
                     HStack {
                         Text(schedule.name)
                         Spacer()
-                        if schedule.start {
-                            Image(systemName: "play.fill")
+                        if schedule.name == self.settings.start_up_schedule.name {
+                            Image(systemName: "play.circle")
                                 .font(.body)
                         }
                     }
@@ -37,6 +54,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(UserSettings())
     }
 }
