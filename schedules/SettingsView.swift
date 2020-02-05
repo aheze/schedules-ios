@@ -9,7 +9,18 @@
 import SwiftUI
 import SwiftEntryKit
 
-struct SettingsView: View {
+
+protocol OnClickPro: struct {
+    func rowPressed(row: Int)
+}
+
+
+struct SettingsView: View, OnClickPro {
+    
+    func rowPressed(row: Int) {
+        print("a row has been pressed. Row: \(row)")
+    }
+    
     @EnvironmentObject var settings: UserSettings
     
     var body: some View {
@@ -25,6 +36,7 @@ struct SettingsView: View {
                         .font(.caption)
                         .onTapGesture {
                             let action_sheet_view = ActionSheetView()
+                            action_sheet_view.rowPressedDelegate = self
                             
                             var sek_attributes = EKAttributes.bottomFloat
                             sek_attributes.entryBackground = .color(color: .white)
